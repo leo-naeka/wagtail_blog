@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blogpage',
             name='body',
-            field=wagtail.wagtailcore.fields.RichTextField(verbose_name='body'),
+            field=wagtail.wagtailcore.fields.RichTextField(blank=True, verbose_name='body'),
             preserve_default=True,
         ),
         migrations.AlterField(

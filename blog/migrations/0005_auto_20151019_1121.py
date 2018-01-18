@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 from django.conf import settings
 import datetime
+import django.db.models.deletion
 
 
 def default_author(apps, schema_editor):
@@ -35,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blogpage',
             name='author',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='author_pages', to=settings.AUTH_USER_MODEL, verbose_name='Author'),
         ),
         migrations.AddField(
             model_name='blogpage',

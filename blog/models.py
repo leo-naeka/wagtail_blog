@@ -1,3 +1,6 @@
+# -*- coding:Utf-8 -*-
+from __future__ import unicode_literals
+
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
@@ -18,6 +21,11 @@ from taggit.models import TaggedItemBase, Tag
 from modelcluster.tags import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
 import datetime
+
+try:
+    from wagtail.wagtailimages import get_image_model_string
+except ImportError:
+    get_image_model_string = lambda: getattr(settings, 'WAGTAILIMAGES_IMAGE_MODEL', 'wagtailimages.Image')
 
 
 COMMENTS_APP = getattr(settings, 'COMMENTS_APP', None)
@@ -198,7 +206,7 @@ class BlogPage(Page):
                     "used to schedule posts to go live at a later date.")
     )
     header_image = models.ForeignKey(
-        'wagtailimages.Image',
+        get_image_model_string(),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

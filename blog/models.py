@@ -1,6 +1,3 @@
-# -*- coding:Utf-8 -*-
-from __future__ import unicode_literals
-
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
@@ -10,22 +7,19 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Page
+from wagtail.admin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel, FieldRowPanel)
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsnippets.models import register_snippet
-from wagtail.wagtailsearch import index
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images import get_image_model_string
+from wagtail.snippets.models import register_snippet
+from wagtail.search import index
 from taggit.models import TaggedItemBase, Tag
 from modelcluster.tags import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
+from .utils import unique_slugify
 import datetime
-
-try:
-    from wagtail.wagtailimages import get_image_model_string
-except ImportError:
-    get_image_model_string = lambda: getattr(settings, 'WAGTAILIMAGES_IMAGE_MODEL', 'wagtailimages.Image')
 
 
 COMMENTS_APP = getattr(settings, 'COMMENTS_APP', None)
@@ -92,6 +86,7 @@ class BlogIndexPage(Page):
         if hasattr(settings, 'BLOG_PAGINATION_PER_PAGE'):
             page_size = settings.BLOG_PAGINATION_PER_PAGE
 
+        paginator = None
         if page_size is not None:
             paginator = Paginator(blogs, page_size)  # Show 10 blogs per page
             try:
@@ -106,6 +101,7 @@ class BlogIndexPage(Page):
         context['tag'] = tag
         context['author'] = author
         context['COMMENTS_APP'] = COMMENTS_APP
+        context['paginator'] = paginator
         context = get_blog_context(context)
 
         return context
@@ -125,7 +121,8 @@ class BlogCategory(models.Model):
         help_text=_(
             'Categories, unlike tags, can have a hierarchy. You might have a '
             'Jazz category, and under that have children categories for Bebop'
-            ' and Big Band. Totally optional.')
+            ' and Big Band. Totally optional.'),
+        on_delete=models.CASCADE,
     )
     description = models.CharField(max_length=500, blank=True)
 
@@ -153,17 +150,15 @@ class BlogCategory(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = slugify(self.name)
-            count = BlogCategory.objects.filter(slug=slug).count()
-            if count > 0:
-                slug = '{}-{}'.format(slug, count)
-            self.slug = slug
+            unique_slugify(self, self.name)
         return super(BlogCategory, self).save(*args, **kwargs)
 
 
 class BlogCategoryBlogPage(models.Model):
     category = models.ForeignKey(
-        BlogCategory, related_name="+", verbose_name=_('Category'))
+        BlogCategory, related_name="+", verbose_name=_('Category'),
+        on_delete=models.CASCADE,
+    )
     page = ParentalKey('BlogPage', related_name='categories')
     panels = [
         FieldPanel('category'),

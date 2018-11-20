@@ -1,11 +1,12 @@
-# wagtail_blog
-A WordPress-like blog app implemented in Wagtail.
+# Wagtail Blog
 
-[![Build Status](https://travis-ci.org/thelabnyc/wagtail_blog.svg?branch=master)](https://travis-ci.org/thelabnyc/wagtail_blog)
+[![pipeline status](https://gitlab.com/thelabnyc/wagtail_blog/badges/master/pipeline.svg)](https://gitlab.com/thelabnyc/wagtail_blog/commits/master)
+
+A WordPress-like blog app implemented in Wagtail.
 
 # What is it
 
-After reimplimenting WordPress-like blogs over and over again in Wagtail I decided to just make this. 
+After reimplementing WordPress-like blogs over and over again in Wagtail I decided to just make this.
 Feel free to use as is or copy it as a starting point. 
 It's based on the Wagtail demo blog but is closer to a standard WordPress blog style. 
 
@@ -19,7 +20,7 @@ This is a starting point for your wagtail based blog, especially if you are migr
 - Comments
 - WordPress importer
 
-Work in progress?
+Things you could contribute:
 
 - Disqus comments
 
@@ -27,6 +28,10 @@ Work in progress?
 
 You should start with a existing wagtail django project and have a basic understanding of Wagtail before starting.
 See http://docs.wagtail.io
+
+For Wagtail 2 and Django 1.11+ use wagtail-blog 2.x
+
+For Wagtail 1.x use wagtail-blog 1.7.x
 
 1. `pip install wagtail-blog`
 2. Add `blog` to INSTALLED_APPS
@@ -54,7 +59,7 @@ This works by getting the json data for your posts and making Wagtail pages for 
 It then downloads any images it finds and replaces urls to use your site instead of an external site. 
 Blog authors will become Django users.
 This is a complex process and is prone to error. You should plan to review the import code and fix some issues.
-Pull requests welcome to improve this feature.
+Merge requests welcome to improve this feature.
 
 ## XML file import
 
@@ -77,7 +82,7 @@ Out of box Disqus coming someday - but it's pretty easy to add manually followin
 
 Feel free to contribute other comment implimentations.
 
-# Hacking
+# Development and Contributing
 
 The included docker-compose file should make it easy to get up and running. 
 
@@ -86,3 +91,10 @@ The included docker-compose file should make it easy to get up and running.
 3. `docker-compose run --rm web ./manage.py migrate`
 4. `docker-compose run --rm web ./manage.py createsuperuser`
 5. Log in and create a blog index page with blog pages to see a very basic implementation.
+
+Please submit issues and merge requests only on [gitlab](https://gitlab.com/thelabnyc/wagtail_blog). The github page is a read only mirror.
+
+A good merge request should have:
+
+- Based off of the master branch. It should contain only changes that are yours and not from merging.
+- Include tests whenever possible. Are you fixing a bug? Add a test that breaks before your patch and works after.

@@ -2,8 +2,11 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import wagtail.wagtailcore.fields
 import django.db.models.deletion
+
+from wagtail.images import get_image_model_string
+import wagtail.core.fields
+
 import modelcluster.fields
 import modelcluster.tags
 
@@ -34,7 +37,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('sort_order', models.IntegerField(null=True, blank=True, editable=False)),
-                ('category', models.ForeignKey(related_name='+', to='blog.BlogCategory')),
+                ('category', models.ForeignKey(related_name='+', to='blog.BlogCategory', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -45,7 +48,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BlogIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, to='wagtailcore.Page', primary_key=True, auto_created=True, parent_link=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, to='wagtailcore.Page', primary_key=True, auto_created=True, parent_link=True, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -55,9 +58,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BlogPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, to='wagtailcore.Page', primary_key=True, auto_created=True, parent_link=True)),
-                ('body', wagtail.wagtailcore.fields.RichTextField()),
-                ('header_image', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image', blank=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, to='wagtailcore.Page', primary_key=True, auto_created=True, parent_link=True, on_delete=models.CASCADE)),
+                ('body', wagtail.core.fields.RichTextField()),
+                ('header_image', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=get_image_model_string(), blank=True)),
             ],
             options={
                 'abstract': False,
@@ -69,7 +72,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('content_object', modelcluster.fields.ParentalKey(related_name='tagged_items', to='blog.BlogPage')),
-                ('tag', models.ForeignKey(related_name='blog_blogpagetag_items', to='taggit.Tag')),
+                ('tag', models.ForeignKey(related_name='blog_blogpagetag_items', to='taggit.Tag', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

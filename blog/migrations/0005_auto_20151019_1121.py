@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 from django.conf import settings
 import datetime
-import django.db.models.deletion
 
 
 def default_author(apps, schema_editor):
@@ -36,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blogpage',
             name='author',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='author_pages', to=settings.AUTH_USER_MODEL, verbose_name='Author'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT),
         ),
         migrations.AddField(
             model_name='blogpage',
@@ -46,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blogcategory',
             name='parent',
-            field=models.ForeignKey(to='blog.BlogCategory', help_text='Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have children categories for Bebop and Big Band. Totally optional.', related_name='children', null=True, blank=True),
+            field=models.ForeignKey(to='blog.BlogCategory', help_text='Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have children categories for Bebop and Big Band. Totally optional.', related_name='children', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='blogpage',

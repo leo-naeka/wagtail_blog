@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django_comments_xtd.models import XtdComment
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 from .models import (BlogPage, BlogTag, BlogPageTag, BlogIndexPage,
                      BlogCategory, BlogCategoryBlogPage)
@@ -230,3 +230,8 @@ class BlogTests(TestCase):
         child_comment = XtdComment.objects.get(level=1)
         self.assertEqual(parent_comment.id, child_comment.parent_id)
 
+    def test_unique_category_slug(self):
+        """ Ensure unique slugs are generated without erroring """
+        BlogCategory.objects.create(name="one")
+        BlogCategory.objects.create(name="one#")
+        BlogCategory.objects.create(name="one!")
